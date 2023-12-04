@@ -4,9 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"golang.org/x/crypto/bcrypt"
 	"log"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 const dbTimeout = time.Second * 3
@@ -105,7 +106,6 @@ func (u *User) GetByEmail(email string) (*User, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return &user, nil
 }
 
