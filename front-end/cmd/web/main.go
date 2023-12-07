@@ -13,12 +13,12 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		render(w, "test.page.gohtml")
 	})
-
 	fmt.Println("Starting front end service on port 8000")
 	err := http.ListenAndServe(":8000", nil)
 	if err != nil {
 		log.Panic(err)
 	}
+
 }
 
 func render(w http.ResponseWriter, t string) {

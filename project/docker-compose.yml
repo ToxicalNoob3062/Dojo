@@ -19,7 +19,7 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      
+
   authentication-service:
     build:
       context: "./../authentication-service"
@@ -46,7 +46,7 @@ services:
     volumes:
       - ./db-data/postgres/:/var/lib/postgresql/data/
   mongo:
-    image: "mongo:5.0.3"
+    image: "mongo:4.2.16-bionic"
     ports:
       - "27017:27017"
     environment:

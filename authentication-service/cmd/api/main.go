@@ -24,7 +24,6 @@ type Config struct {
 }
 
 func main() {
-	log.Println("Starting authentication service on port", webPort)
 
 	//connect to the database
 	conn := connectToDB()
@@ -42,7 +41,7 @@ func main() {
 		Addr:    fmt.Sprintf(":%s", webPort),
 		Handler: app.routes(),
 	}
-
+	log.Println("Starting authentication service on port", webPort)
 	err := srv.ListenAndServe()
 
 	if err != nil {
