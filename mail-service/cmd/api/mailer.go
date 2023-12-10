@@ -2,11 +2,10 @@ package main
 
 import (
 	"bytes"
-	"text/template"
-	"time"
-
 	"github.com/vanng822/go-premailer/premailer"
 	mail "github.com/xhit/go-simple-mail/v2"
+	"text/template"
+	"time"
 )
 
 type Mail struct {
@@ -45,16 +44,19 @@ func (m *Mail) SendSMTPMessage(msg Message) error {
 
 	msg.DataMap = data
 
+	//parse html mail from message
 	formattedMessage, err := m.buildHTMLMessage(msg)
 	if err != nil {
 		return err
 	}
 
+	//parse plain mail from message
 	plainMessage, err := m.buildPlainTextMessage(msg)
 	if err != nil {
 		return err
 	}
 
+	//connect to smtp server (mailHog)
 	server := mail.NewSMTPClient()
 	server.Host = m.Host
 	server.Port = m.Port
@@ -70,15 +72,18 @@ func (m *Mail) SendSMTPMessage(msg Message) error {
 		return err
 	}
 
+	//make the email object with all important properties!
 	email := mail.NewMSG()
 	email.SetFrom(msg.From).AddTo(msg.To).SetSubject(msg.Subject)
 	email.SetBody(mail.TextPlain, plainMessage)
 	email.AddAlternative(mail.TextHTML, formattedMessage)
 
+	//add attachments to email
 	for _, attachment := range msg.Attachments {
 		email.AddAttachment(attachment)
 	}
 
+	//send the email using your smtp client
 	err = email.Send(smtpClient)
 	if err != nil {
 		return err

@@ -8,6 +8,7 @@ import (
 	"strconv"
 )
 
+// everything needed to run the app or server!
 type Config struct {
 	Mailer Mail
 }
@@ -34,7 +35,10 @@ func main() {
 
 }
 
+// Creates Mail object dynamically from environment variables
+// Mail object is details about the mail server and sender
 func createMail() Mail {
+	// convert string to int
 	port, _ := strconv.Atoi(os.Getenv("MAIL_PORT"))
 	m := Mail{
 		Domain:      os.Getenv("MAIL_DOMAIN"),
