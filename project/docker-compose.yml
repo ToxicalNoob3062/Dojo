@@ -55,6 +55,26 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
       - ./db-data/mongo/:/data/db/
+  mailer-service:
+    build:
+      context: "./../mail-service"
+      dockerfile: "./../mail-service/mail-service.dockerfile"
+    restart: always
+    ports:
+      - "8083:8083"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      MAIL_DOMAIN: localhost
+      MAIL_HOST: mailhog
+      MAIL_PORT: 1025
+      MAIL_USERNAME: ""
+      MAIL_PASSWORD: ""
+      MAIL_ENCRYPTION: ""
+      FROM_NAME: rahat
+      FROM_ADDRESS: chicks4056@gmail.com
+
   mailhog:
     image: "mailhog/mailhog:latest"
     ports:
