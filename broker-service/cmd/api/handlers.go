@@ -1,9 +1,11 @@
 package main
 
 import (
+	"broker/event"
 	"bytes"
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 )
 
@@ -58,7 +60,7 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 	case "auth":
 		app.authenticate(w, requestPayload.Auth)
 	case "log":
-		app.logItem(w, requestPayload.Log)
+		app.logEventViaRabbit(w, requestPayload.Log)
 	case "mail":
 		app.sendMail(w, requestPayload.Mail)
 	default:
@@ -114,6 +116,7 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 	app.writeJson(w, http.StatusAccepted, payload)
 }
 
+// used for direct logging to log service (#refferrence)
 func (app *Config) logItem(w http.ResponseWriter, entry LogPayload) {
 	jsonData, _ := json.MarshalIndent(entry, "", "\t")
 
@@ -177,4 +180,39 @@ func (app *Config) sendMail(w http.ResponseWriter, mail MailPayload) {
 	payload.Message = "Mail sent to: " + mail.To
 
 	app.writeJson(w, http.StatusAccepted, payload)
+}
+
+func (app *Config) logEventViaRabbit(w http.ResponseWriter, l LogPayload) {
+	err := app.pushToQueue(l.Name, l.Data)
+	if err != nil {
+		log.Println("Printing error!")
+		app.errorJson(w, err)
+		return
+	}
+
+	log.Println("Pushed to queue!")
+
+	var payload jsonResponse
+	payload.Error = false
+	payload.Message = "Logged via rabbit mq!!"
+	app.writeJson(w, http.StatusAccepted, payload)
+}
+
+func (app *Config) pushToQueue(name, msg string) error {
+	emmiter, err := event.NewEventEmitter(app.Rabbit)
+	if err != nil {
+		return err
+	}
+
+	payload := LogPayload{
+		Name: name,
+		Data: msg,
+	}
+
+	json, _ := json.MarshalIndent(&payload, "", "\t")
+	err = emmiter.Push(string(json), "log.INFO")
+	if err != nil {
+		return err
+	}
+	return nil
 }
