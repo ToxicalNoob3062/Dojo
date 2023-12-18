@@ -23,3 +23,22 @@ Here's a visual representation of the project:
 📺 Watch the given video link for a video demonstration on how this works!
 
 Stay tuned for more updates as I continue to learn and grow my skills in microservices with Go! 🌱🚀
+
+## 🚀 Getting Started 🚀
+
+To run the demo on your own PC, you'll need Docker installed. Follow these steps:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ToxicalNoob3062/Dojo
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd Dojo
+   ```
+3. Start the Docker containers:
+   ```bash
+   docker-compose -f ./project/docker-compose.yml up -d
+   ```
+
+That's it! Your application should now be running.
