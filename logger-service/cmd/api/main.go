@@ -3,15 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"log-service/cmd/data"
-	"net"
 	"net/http"
 	"net/rpc"
 	"time"
-
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const (
@@ -59,27 +57,11 @@ func main() {
 	}
 	go app.rpcListen()
 
+	//start grpc server in a goroutine
+	go app.gRPCListen()
+
 	//start the server
 	app.serve()
-}
-
-func (app *Config) rpcListen() error {
-	log.Println("Starting rpc service on port", rpcPort)
-	listen, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%s", rpcPort))
-	if err != nil {
-		println("Error in listening: ", err)
-		return err
-	}
-	defer listen.Close()
-
-	for {
-		rpcConn, err := listen.Accept()
-		if err != nil {
-			println("Error in accepting connection: ", err)
-			continue
-		}
-		go rpc.ServeConn(rpcConn)
-	}
 }
 
 func (app *Config) serve() {
