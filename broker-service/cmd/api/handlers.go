@@ -210,7 +210,7 @@ func (app *Config) logEventViaRabbit(w http.ResponseWriter, l LogPayload) {
 
 	var payload jsonResponse
 	payload.Error = false
-	payload.Message = "Logged via rabbit mq!!"
+	payload.Message = "Logged via rabbit-mq!!"
 	app.writeJson(w, http.StatusAccepted, payload)
 }
 
@@ -250,7 +250,6 @@ func (app *Config) logItemViaRPC(w http.ResponseWriter, l LogPayload) {
 	var result string
 	err = client.Call("RPCServer.LogInfo", &rpcPayload, &result)
 	if err != nil {
-		println("Ouch!!!")
 		app.errorJson(w, err)
 		return
 	}

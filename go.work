@@ -3,7 +3,7 @@ go 1.21.5
 use (
     "./authentication-service"
     "./broker-service"
-    "./front-end"
+    "./frontend"
     "./logger-service"
     "./mail-service"
     "./listener-service"
