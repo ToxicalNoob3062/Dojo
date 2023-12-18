@@ -6,10 +6,13 @@
             <div class="col">
                 <h1 class="mt-5">Test microservices</h1>
                 <hr>
-                <a id="brokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Broker</a>
-                <a id="authBrokerBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Test Auth</a>
-                <a id="logBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Do Logging</a>
-                <a id="mailBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Send Mail</a>
+                <a id="brokerBtn" class="btn btn-outline-primary" href="javascript:void(0)">Test Broker</a>
+                <a id="authBrokerBtn" class="btn btn-outline-success" href="javascript:void(0)">Test Auth</a>
+                <a id="logBtn" class="btn btn-outline-danger" href="javascript:void(0)">HTTP Logging</a>
+                <a id="mailBtn" class="btn btn-outline-warning" href="javascript:void(0)">Send Mail</a>
+                <a id="rpcBtn" class="btn btn-outline-info" href="javascript:void(0)">RPC Logging</a>
+                <a id="grpcBtn" class="btn btn-outline-dark" href="javascript:void(0)">GRPC Logging</a>
+                <a id="rabbitBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Rabbit Event</a>
 
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
@@ -42,6 +45,9 @@
         let output = document.getElementById('output');
         let sent = document.getElementById('payload');
         let received = document.getElementById('received');
+        let rpcBtn = document.getElementById('rpcBtn');
+        let grpcBtn = document.getElementById('grpcBtn');
+        let rabbitBtn = document.getElementById('rabbitBtn');
 
         mailBtn.addEventListener('click',async function(){
             const payload = {
@@ -82,7 +88,103 @@
                 action: "log",
                 log:{
                     name:"event",
-                    data:"frontend ping!!"
+                    data:"http ping!!"
+                }
+            }
+
+            const headers = new Headers()
+            headers.append("Content-Type","application/json")
+            const body = {
+                method: "POST",
+                body: JSON.stringify(payload),
+                headers: headers
+            }
+             try {
+                const res = await fetch("http:\/\/localhost:8080/handle" , body)
+                const data = await res.json();
+                sent.innerHTML = JSON.stringify(payload, undefined, 4);
+                received.innerHTML = JSON.stringify(data, undefined, 4);
+                if (data.error) {
+                    output.innerHTML += `<br><strong>Error:</strong>${data.message}`;
+                } else {
+                    output.innerHTML += `<br><strong>Response from broker service: </strong>${data.message}`;
+                }
+            }
+            catch(err){
+                output.innerHTML+="<br><br>Error:"+err.message;
+            }
+        })
+
+        rpcBtn.addEventListener('click',async function(){
+            const payload = {
+                action: "rpc",
+                log:{
+                    name:"event",
+                    data:"rpc ping!!"
+                }
+            }
+
+            const headers = new Headers()
+            headers.append("Content-Type","application/json")
+            const body = {
+                method: "POST",
+                body: JSON.stringify(payload),
+                headers: headers
+            }
+             try {
+                const res = await fetch("http:\/\/localhost:8080/handle" , body)
+                const data = await res.json();
+                sent.innerHTML = JSON.stringify(payload, undefined, 4);
+                received.innerHTML = JSON.stringify(data, undefined, 4);
+                if (data.error) {
+                    output.innerHTML += `<br><strong>Error:</strong>${data.message}`;
+                } else {
+                    output.innerHTML += `<br><strong>Response from broker service: </strong>${data.message}`;
+                }
+            }
+            catch(err){
+                output.innerHTML+="<br><br>Error:"+err.message;
+            }
+        })
+
+        grpcBtn.addEventListener('click',async function(){
+            const payload = {
+                action: "grpc",
+                log:{
+                    name:"event",
+                    data:"grpc ping!!"
+                }
+            }
+
+            const headers = new Headers()
+            headers.append("Content-Type","application/json")
+            const body = {
+                method: "POST",
+                body: JSON.stringify(payload),
+                headers: headers
+            }
+             try {
+                const res = await fetch("http:\/\/localhost:8080/handle" , body)
+                const data = await res.json();
+                sent.innerHTML = JSON.stringify(payload, undefined, 4);
+                received.innerHTML = JSON.stringify(data, undefined, 4);
+                if (data.error) {
+                    output.innerHTML += `<br><strong>Error:</strong>${data.message}`;
+                } else {
+                    output.innerHTML += `<br><strong>Response from broker service: </strong>${data.message}`;
+                }
+            }
+            catch(err){
+                output.innerHTML+="<br><br>Error:"+err.message;
+            }
+        })
+
+        rabbitBtn.addEventListener('click',async function(){
+            const payload = {
+                action: "rabbit",
+                log:{
+                    name:"event",
+                    data:"rabbit event ping!!"
                 }
             }
 

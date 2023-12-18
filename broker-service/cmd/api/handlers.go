@@ -42,8 +42,11 @@ type MailPayload struct {
 type RequestPayload struct {
 	Action string      `json:"action"`
 	Auth   AuthPayload `json:"auth,omitempty"`
-	Log    LogPayload  `json:"log,omitempty"`
 	Mail   MailPayload `json:"mail,omitempty"`
+	Log    LogPayload  `json:"log,omitempty"`
+	RPC    LogPayload  `json:"rpc,omitempty"`
+	Rabbit LogPayload  `json:"rabbit,omitempty"`
+	GRPC   LogPayload  `json:"grpc,omitempty"`
 }
 
 func (app *Config) Broker(w http.ResponseWriter, r *http.Request) {
@@ -67,9 +70,15 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 	case "auth":
 		app.authenticate(w, requestPayload.Auth)
 	case "log":
-		app.logItemViaGRPC(w, requestPayload.Log)
+		app.logItem(w, requestPayload.Log)
 	case "mail":
 		app.sendMail(w, requestPayload.Mail)
+	case "rabbit":
+		app.logEventViaRabbit(w, requestPayload.Rabbit)
+	case "rpc":
+		app.logItemViaRPC(w, requestPayload.RPC)
+	case "grpc":
+		app.logItemViaGRPC(w, requestPayload.GRPC)
 	default:
 		app.errorJson(w, errors.New("invalid action"))
 	}
