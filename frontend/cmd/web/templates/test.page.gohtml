@@ -12,7 +12,8 @@
                 <a id="logBtn" class="btn btn-outline-danger" href="javascript:void(0)">HTTP Logging</a>
                 <a id="rpcBtn" class="btn btn-outline-info" href="javascript:void(0)">RPC Logging</a>
                 <a id="grpcBtn" class="btn btn-outline-dark" href="javascript:void(0)">GRPC Logging</a>
-                <a id="rabbitBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Rabbit Event</a>
+                <a id="rabbitBtn" class="btn btn-outline-secondary" href="javascript:void(0)">Rabbit Event</a><br><br>
+                <a id="registerBtn" class="btn btn-outline-danger" href="javascript:void(0)">Register User</a>
 
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
@@ -48,6 +49,26 @@
         let rpcBtn = document.getElementById('rpcBtn');
         let grpcBtn = document.getElementById('grpcBtn');
         let rabbitBtn = document.getElementById('rabbitBtn');
+        let registerBtn = document.getElementById('registerBtn');
+
+        registerBtn.addEventListener('click',async function(){
+            const headers = new Headers()
+            headers.append("Content-Type","application/json")
+            try {
+                const res = await fetch("http:\/\/localhost:8080/register")
+                const data = await res.json();
+                sent.innerHTML = JSON.stringify(payload, undefined, 4);
+                received.innerHTML = JSON.stringify(data, undefined, 4);
+                if (data.error) {
+                    output.innerHTML += `<br><strong>Error:</strong>${data.message}`;
+                } else {
+                    output.innerHTML += `<br><strong>Response from broker service: </strong>${data.message}`;
+                }
+            }
+            catch(err){
+                output.innerHTML+="<br><br>Error:"+err.message;
+            }
+        })
 
         mailBtn.addEventListener('click',async function(){
             const payload = {

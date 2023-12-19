@@ -84,6 +84,33 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (app *Config) RegisterUser(w http.ResponseWriter, _ *http.Request) {
+	req, err := http.NewRequest("GET", `http://project_authentication-service_1:8081/register`, nil)
+	if err != nil {
+		app.errorJson(w, err)
+		return
+	}
+
+	client := &http.Client{}
+	response, err := client.Do(req)
+	if err != nil {
+		app.errorJson(w, err)
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode != http.StatusAccepted {
+		app.errorJson(w, errors.New("already registered succesfully"))
+		return
+	}
+
+	payloadResponse := jsonResponse{
+		Error:   false,
+		Message: "Registered!",
+	}
+	app.writeJson(w, http.StatusAccepted, payloadResponse)
+}
+
 func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 	//create some json to sent to auth microservice
 	jsonData, _ := json.MarshalIndent(a, "", "\t")
@@ -107,7 +134,7 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 		app.errorJson(w, errors.New("invalid credentials"))
 		return
 	} else if response.StatusCode != http.StatusAccepted {
-		app.errorJson(w, errors.New("error calling auth service"))
+		app.errorJson(w, errors.New("you are not authorized to access this service"))
 		return
 	}
 

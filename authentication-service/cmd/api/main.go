@@ -2,6 +2,7 @@ package main
 
 import (
 	"authentication/cmd/data"
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
@@ -37,12 +38,18 @@ func main() {
 		Models: data.New(conn),
 	}
 
+	//create a user table
+	err := app.Models.User.CreateTable(context.Background(), app.DB)
+	if err != nil {
+		log.Panic(err)
+	}
+
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%s", webPort),
 		Handler: app.routes(),
 	}
 	log.Println("Starting authentication service on port", webPort)
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 
 	if err != nil {
 		log.Panic(err)

@@ -43,7 +43,6 @@ func main() {
 	if err != nil {
 		log.Panic(err)
 	}
-
 }
 
 func connect() (*amqp.Connection, error) {

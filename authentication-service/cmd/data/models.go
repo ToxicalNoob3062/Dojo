@@ -37,7 +37,7 @@ type User struct {
 	FirstName string    `json:"first_name,omitempty"`
 	LastName  string    `json:"last_name,omitempty"`
 	Password  string    `json:"-"`
-	Active    int       `json:"active"`
+	Active    bool      `json:"active"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -263,4 +263,26 @@ func (u *User) PasswordMatches(plainText string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (u *User) CreateTable(ctx context.Context, db *sql.DB) error {
+	query := `
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            email VARCHAR(255) UNIQUE NOT NULL,
+            first_name VARCHAR(255),
+            last_name VARCHAR(255),
+            password VARCHAR(255) NOT NULL,
+            user_active BOOLEAN,
+            created_at TIMESTAMP,
+            updated_at TIMESTAMP
+        );
+    `
+
+	_, err := db.ExecContext(ctx, query)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

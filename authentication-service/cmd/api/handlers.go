@@ -1,6 +1,7 @@
 package main
 
 import (
+	"authentication/cmd/data"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -75,4 +76,35 @@ func (app *Config) logRequest(name, data string) error {
 		return err
 	}
 	return nil
+}
+
+func (app *Config) Register(w http.ResponseWriter, _ *http.Request) {
+	user := data.User{
+		Email:     "admin@example.com",
+		Password:  "verysecret",
+		Active:    false,
+		FirstName: "Admin",
+		LastName:  "User",
+	}
+
+	_, exists := app.Models.User.GetByEmail(user.Email)
+	if exists == nil {
+		app.errorJson(w, errors.New("user already exists"))
+		return
+	}
+
+	id, err := app.Models.User.Insert(user)
+
+	if err != nil {
+		println("Error inserting user", err.Error())
+		app.errorJson(w, err)
+		return
+	}
+
+	response := jsonResponse{
+		Error:   false,
+		Message: fmt.Sprintf("User created with id %d", id),
+	}
+
+	app.writeJson(w, http.StatusAccepted, response)
 }
