@@ -26,6 +26,8 @@ Stay tuned for more updates as I continue to learn and grow my skills in microse
 
 ## 🚀 Getting Started 🚀
 
+![Project Image](./public/Frontend.png)
+
 To run the demo on your own PC, you'll need Docker installed. Follow these steps:
 
 1. Clone the repository:
